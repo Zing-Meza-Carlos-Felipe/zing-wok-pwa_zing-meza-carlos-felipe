@@ -59,6 +59,38 @@ body {
   background: #DC2626;
 }
 
+/* ==================== FILTROS ==================== */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.filtro {
+  width: auto;              /* Cancela el width: 100% de la regla general de button */
+  margin-top: 0;           /* Elimina el margen superior por defecto */
+  background: #f3f4f6;     /* Color neutro para los filtros inactivofs */
+  color: #1C1917;
+  border: 1px solid #e5e7eb;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  border-radius: 999px;    /* Estilo de pastilla/pill elegante */
+  transition: all 0.2s ease;
+}
+
+.filtro:hover {
+  background: #e5e7eb;
+}
+
+/* Estado del filtro activo */
+.filtro--activo,
+.filtro--activo:hover {
+  background: #DC2626;
+  color: white;
+  border-color: #DC2626;
+}
+
 /* ==================== CONTENIDO PRINCIPAL ==================== */
 main {
   max-width: 800px;

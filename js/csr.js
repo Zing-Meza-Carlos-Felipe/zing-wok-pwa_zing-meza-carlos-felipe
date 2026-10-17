@@ -1,46 +1,84 @@
-// csr.js — Renderizado en el Cliente (CSR)
-// "CSR" significa que el HTML llega casi vacío y es ESTE archivo JavaScript,
-// ya corriendo en el navegador del usuario, quien construye el contenido.
+// csr.js — Renderizado en el Cliente (CSR) con Filtros
 
-// 1) Buscamos el contenedor vacío que dejamos en index.html
 const contenedorCatalogo = document.getElementById("catalogo");
+let productosGlobales = []; // Guardará el catálogo completo para poder filtrar
 
-// 2) fetch() le pide el archivo catalogo.json al servidor (aquí simula una API real).
-//    fetch() devuelve una "promesa": un valor que llegará más adelante, no de inmediato.
+// 1) fetch() le pide el archivo catalogo.json al servidor
 fetch("catalogo.json")
-  .then((respuesta) => respuesta.json()) // convierte el texto recibido en un array de objetos JS
+  .then((respuesta) => respuesta.json())
   .then((productos) => {
-    // 3) Ya tenemos los productos: borramos las tarjetas esqueleto y dibujamos las reales
-    contenedorCatalogo.innerHTML = "";
+    productosGlobales = productos; // Guardamos la lista original
+    
+    // Quitamos los atributos de carga
     contenedorCatalogo.removeAttribute("aria-busy");
     contenedorCatalogo.removeAttribute("aria-label");
 
-    productos.forEach((producto) => {
-      // creamos un <div class="producto"> por cada producto, desde JavaScript puro
-      const tarjeta = document.createElement("div");
-      tarjeta.className = "producto";
+    // Mostramos todos los productos la primera vez
+    renderizarProductos(productosGlobales);
 
-      // usamos el propio objeto "producto" para llenar el texto (sin plantillas de servidor)
-      tarjeta.innerHTML = `
-        <img class="producto__foto" src="${producto.imagen}" alt="${producto.nombre}" loading="lazy">
-        <strong>${producto.nombre}</strong>
-        <span class="precio">$${producto.precio}</span>
-        <p>Stock: ${producto.stock}</p>
-        <button type="button" data-id="${producto.id}">Agregar al carrito</button>
-      `;
-
-      contenedorCatalogo.appendChild(tarjeta);
-
-      // conectamos el botón recién creado con la función agregarAlCarrito() de carrito.js
-      tarjeta.querySelector("button").addEventListener("click", () => {
-        agregarAlCarrito(producto);
-      });
-    });
+    // Activamos la lógica de clics para las pestañas de filtro
+    configurarFiltros();
   })
   .catch((error) => {
-    // si algo falla (por ejemplo, sin conexión y sin caché), avisamos en pantalla
     contenedorCatalogo.innerHTML = "<p>No se pudo cargar el catálogo. Intenta más tarde.</p>";
     contenedorCatalogo.removeAttribute("aria-busy");
     contenedorCatalogo.removeAttribute("aria-label");
     console.error("Error al cargar catálogo:", error);
   });
+
+// 2) Función que dibuja en pantalla el array de productos que se le pase
+function renderizarProductos(listaProductos) {
+  contenedorCatalogo.innerHTML = ""; // Borramos las tarjetas anteriores
+
+  if (listaProductos.length === 0) {
+    contenedorCatalogo.innerHTML = "<p>No hay productos disponibles en esta categoría.</p>";
+    return;
+  }
+
+  listaProductos.forEach((producto) => {
+    const tarjeta = document.createElement("div");
+    tarjeta.className = "producto";
+
+    tarjeta.innerHTML = `
+      <img class="producto__foto" src="${producto.imagen}" alt="${producto.nombre}" loading="lazy">
+      <strong>${producto.nombre}</strong>
+      <span class="precio">$${producto.precio}</span>
+      <p>Stock: ${producto.stock}</p>
+      <button type="button" data-id="${producto.id}">Agregar al carrito</button>
+    `;
+
+    contenedorCatalogo.appendChild(tarjeta);
+
+    // Conectamos el botón con agregarAlCarrito() de carrito.js
+    tarjeta.querySelector("button").addEventListener("click", () => {
+      if (typeof agregarAlCarrito === "function") {
+        agregarAlCarrito(producto);
+      }
+    });
+  });
+}
+
+// 3) Función para controlar el comportamiento visual y la acción de los botones de filtro
+function configurarFiltros() {
+  const contenedorFiltros = document.querySelector(".filtros");
+  if (!contenedorFiltros) return;
+
+  contenedorFiltros.addEventListener("click", (e) => {
+    const boton = e.target.closest(".filtro");
+    if (!boton) return;
+
+    // Cambiar la clase activa visualmente
+    document.querySelectorAll(".filtro").forEach((btn) => btn.classList.remove("filtro--activo"));
+    boton.classList.add("filtro--activo");
+
+    // Filtrar los productos por la categoría seleccionada
+    const categoria = boton.dataset.categoria;
+
+    if (categoria === "Todos") {
+      renderizarProductos(productosGlobales);
+    } else {
+      const filtrados = productosGlobales.filter((p) => p.categoria === categoria);
+      renderizarProductos(filtrados);
+    }
+  });
+}
