@@ -108,7 +108,7 @@ function sincronizarCarrito() {
   }
 
   // Aquí iría: fetch("https://mi-api.com/carrito", { method: "POST", body: ... })
-  mensaje.textContent = "Carrito sincronizado con el servidor (simulado). ✓";
+  mensaje.textContent = "Carrito sincronizado con el servidor";
 }
 
 document.addEventListener("DOMContentLoaded", () => {

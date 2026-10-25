@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Creamos una notificación de prueba. title, luego un objeto con opciones.
         new Notification("Zing - Wok", {
           body: "¡Listo! Te avisaremos cuando haya nuevas ofertas.",
-          icon: "icons/icon.jpg",
+          icon: "icons/zing-wok-logo.png",
         });
         mensaje.textContent = "Notificaciones activadas.";
       } else {

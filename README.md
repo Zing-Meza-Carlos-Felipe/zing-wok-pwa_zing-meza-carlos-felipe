@@ -1,4 +1,4 @@
-# Nombre de tu negocio — PWA de ventas
+# Zing Wok — PWA de ventas
 
 | Dato | Valor |
 |---|---|
