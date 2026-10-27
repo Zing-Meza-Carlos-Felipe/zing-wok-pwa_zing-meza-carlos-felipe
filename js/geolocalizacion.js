@@ -37,10 +37,11 @@ function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
 // en un proyecto real conviene un servidor propio o un proveedor de pago.
 // Devuelve { coords, distanciaKm, duracionMin } listo para dibujar, o null si falla.
 async function obtenerRuta(origenLat, origenLon) {
+  // CORRECCIÓN APLICA AQUÍ: geometries=geojson
   const url =
     "https://router.project-osrm.org/route/v1/driving/" +
     `${origenLon},${origenLat};${SUCURSAL.lon},${SUCURSAL.lat}` +
-    "?overview=full&geometry=geojson";
+    "?overview=full&geometries=geojson";
 
   try {
     const respuesta = await fetch(url);
